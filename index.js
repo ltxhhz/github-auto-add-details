@@ -4,6 +4,7 @@
 // @version      0.1
 // @description  在 markdown 输入框自动添加添加<details>标签
 // @author       ltxhhz
+// @license      MIT
 // @match        https://github.com/*/*/issues/*
 // @match        https://github.com/*/*/pull/*
 // @match        https://github.com/*/*/compare/*
