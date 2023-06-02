@@ -1,21 +1,26 @@
 // ==UserScript==
 // @name         GitHub 输入框添加折叠块
 // @namespace    https://github.com/ltxhhz/github-auto-add-details/
-// @version      0.1
+// @version      0.2
 // @description  在 markdown 输入框自动添加添加<details>标签
 // @author       ltxhhz
 // @license      MIT
-// @match        https://github.com/*/*/issues/*
-// @match        https://github.com/*/*/pull/*
-// @match        https://github.com/*/*/compare/*
-// @match        https://github.com/*/*/discussions/*
+// @match        https://github.com/*
 // @icon         https://github.githubassets.com/favicons/favicon.png
 // @grant        none
 // ==/UserScript==
 
 (function () {
   'use strict';
-  const toolbars = document.querySelectorAll('markdown-toolbar')
+  const matches=[
+    'https://github.com/*/*/issues/*',
+    'https://github.com/*/*/pull/*',
+    'https://github.com/*/*/compare/*',
+    'https://github.com/*/*/discussions/*'
+  ]
+  function matchUrl() {
+    return matches.some(e=>(new RegExp(e.replace(/\*/g,'[^/]+'))).test(location.href))
+  }
   function insertText(e, content) {
     let startPos = e.selectionStart; // 获取光标开始的位置
     let endPos = e.selectionEnd; // 获取光标结束的位置
@@ -62,20 +67,52 @@
       }
     }
   }
-  toolbars.forEach(add)
-  const observer = new MutationObserver((list, obs) => {
-    list.forEach(e => {
-      if (e.type == 'childList') {
-        if (e.addedNodes.length) {
-          e.addedNodes.forEach(e1 => {
-            let a
-            if (e1 instanceof Element && (a = e1.querySelector('markdown-toolbar'))) {
-              add(a)
-            }
-          })
-        }
-      }
-    })
+  const _wr = function (type) {
+    let orig = history[type];
+    return function () {
+      let rv = orig.apply(this, arguments);
+      let e = new Event(type);
+      e.arguments = arguments;
+      window.dispatchEvent(e);
+      return rv;
+    };
+  };
+  history.pushState = _wr('pushState');
+  history.replaceState = _wr('replaceState');
+
+  // window.addEventListener('replaceState', function (e) {
+  //   console.log('THEY DID IT AGAIN! replaceState 111111');
+  // });
+  window.addEventListener('pushState', function (e) {
+    if (matchUrl()) {
+      setTimeout(main, 500);
+    }
   });
-  observer.observe(document.querySelector('.js-discussion'), { childList: true, subtree: true }) //issue page
+
+  function main(e) {
+    const toolbars = document.querySelectorAll('markdown-toolbar')
+    toolbars.forEach(add)
+    console.log('添加 添加<details>标签 按钮');
+    const observer = new MutationObserver((list, obs) => {
+      list.forEach(e => {
+        if (e.type == 'childList') {
+          if (e.addedNodes.length) {
+            e.addedNodes.forEach(e1 => {
+              let a
+              if (e1 instanceof Element && (a = e1.querySelector('markdown-toolbar'))) {
+                add(a)
+              }
+            })
+          }
+        }
+      })
+    });
+    observer.observe(document.querySelector('.js-discussion'), {
+      childList: true,
+      subtree: true
+    }) //issue page
+  }
+  if (matchUrl()) {
+    main()
+  }
 })();
