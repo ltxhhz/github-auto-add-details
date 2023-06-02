@@ -7,7 +7,7 @@
 
 ## 功能
 使用脚本后会在 issue 等页面的编辑器的工具栏中添加一个按钮  
-![](./imgs/1.png)  
+[![pCpF4h9.md.png](https://s1.ax1x.com/2023/06/02/pCpF4h9.md.png)](https://imgse.com/i/pCpF4h9)  
 点击后自动插入代码  
-![](./imgs/2.jpg)  
-![](./imgs/3.jpg)  
+[![pCpFhtJ.jpg](https://s1.ax1x.com/2023/06/02/pCpFhtJ.jpg)](https://imgse.com/i/pCpFhtJ)  
+[![pCpFfk4.jpg](https://s1.ax1x.com/2023/06/02/pCpFfk4.jpg)](https://imgse.com/i/pCpFfk4)  
